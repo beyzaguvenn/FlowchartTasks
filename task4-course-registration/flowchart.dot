@@ -1,0 +1,45 @@
+digraph CourseRegistration {
+
+node [shape=rectangle]
+
+Start [shape=oval]
+End [shape=oval]
+
+LoginValid [shape=diamond]
+QuotaCheck [shape=diamond]
+PrereqCheck [shape=diamond]
+ScheduleCheck [shape=diamond]
+CreditCheck [shape=diamond]
+MoreCourses [shape=diamond]
+AdvisorNeeded [shape=diamond]
+AdvisorApprove [shape=diamond]
+
+Start -> LoginValid
+
+LoginValid -> End [label="No"]
+LoginValid -> MoreCourses [label="Yes"]
+
+MoreCourses -> End [label="No"]
+MoreCourses -> QuotaCheck [label="Yes"]
+
+QuotaCheck -> PrereqCheck [label="Yes"]
+QuotaCheck -> MoreCourses [label="No"]
+
+PrereqCheck -> ScheduleCheck [label="Yes"]
+PrereqCheck -> MoreCourses [label="No"]
+
+ScheduleCheck -> CreditCheck [label="Yes"]
+ScheduleCheck -> MoreCourses [label="No"]
+
+CreditCheck -> MoreCourses [label="Yes"]
+CreditCheck -> MoreCourses [label="No"]
+
+MoreCourses -> AdvisorNeeded
+
+AdvisorNeeded -> AdvisorApprove [label="Yes"]
+AdvisorNeeded -> End [label="No"]
+
+AdvisorApprove -> End [label="Yes"]
+AdvisorApprove -> End [label="No"]
+
+}
