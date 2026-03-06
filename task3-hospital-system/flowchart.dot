@@ -1,0 +1,52 @@
+digraph HospitalSystem {
+
+    node [shape=rectangle]
+
+    start [shape=oval label="Start"]
+    id [label="Enter ID Number"]
+    menu [label="Select Action\n1-Appointment\n2-Test Results\n3-Exit"]
+
+    start -> id -> menu
+
+    subgraph cluster_appointment {
+        label="Appointment Module"
+
+        clinic [label="Select Clinic"]
+        doctor [label="Display Doctor List"]
+        timeslot [label="Show Available Time Slots"]
+        confirm [shape=diamond label="Confirm Appointment?"]
+        sms [label="Send SMS Notification"]
+    }
+
+    subgraph cluster_tests {
+        label="Test Results Module"
+
+        checktests [shape=diamond label="Tests Exist?"]
+        ready [shape=diamond label="Results Ready?"]
+        showresults [label="Display Results"]
+        download [shape=diamond label="Download PDF?"]
+        waiting [label="Show Waiting Message"]
+    }
+
+    exit [shape=oval label="End"]
+
+    menu -> clinic [label="1"]
+    menu -> checktests [label="2"]
+    menu -> exit [label="3"]
+
+    clinic -> doctor -> timeslot -> confirm
+    confirm -> sms [label="Yes"]
+    confirm -> timeslot [label="No"]
+
+    sms -> menu
+
+    checktests -> waiting [label="No"]
+    checktests -> ready [label="Yes"]
+
+    ready -> showresults [label="Yes"]
+    ready -> waiting [label="No"]
+
+    showresults -> download
+    download -> menu
+    waiting -> menu
+}
