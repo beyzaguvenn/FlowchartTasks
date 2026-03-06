@@ -1,0 +1,60 @@
+flowchart TB
+
+start([Start])
+login[User Login]
+login_check{Credentials valid}
+
+select_product[Select Product]
+stock_check{Product in stock}
+add_cart[Add to Cart]
+
+continue_shop{Continue shopping}
+
+discount_question{Has discount code}
+discount_valid{Code valid}
+apply_discount[Apply Discount]
+
+shipping_check{Free shipping eligible}
+add_shipping[Add Shipping Fee]
+
+payment[Payment Attempt]
+payment_success{Payment successful}
+
+order_confirm[Confirm Order]
+finish([End])
+
+start --> login
+login --> login_check
+
+login_check -- YES --> select_product
+login_check -- NO --> login
+
+select_product --> stock_check
+
+stock_check -- YES --> add_cart
+stock_check -- NO --> select_product
+
+add_cart --> continue_shop
+
+continue_shop -- YES --> select_product
+continue_shop -- NO --> discount_question
+
+discount_question -- YES --> discount_valid
+discount_question -- NO --> shipping_check
+
+discount_valid -- YES --> apply_discount
+discount_valid -- NO --> shipping_check
+
+apply_discount --> shipping_check
+
+shipping_check -- YES --> payment
+shipping_check -- NO --> add_shipping
+
+add_shipping --> payment
+
+payment --> payment_success
+
+payment_success -- YES --> order_confirm
+payment_success -- NO --> payment
+
+order_confirm --> finish
