@@ -1,0 +1,63 @@
+digraph ecommerce {
+    rankdir=TB;
+    node [shape=box];
+
+    start [shape=oval,label="Start"];
+
+    login [label="User Login"];
+    login_check [shape=diamond,label="Credentials valid?"];
+
+    select_product [label="Select Product"];
+    stock_check [shape=diamond,label="Product in stock?"];
+    add_cart [label="Add to Cart"];
+    continue_shop [shape=diamond,label="Continue shopping?"];
+
+    discount_question [shape=diamond,label="Has discount code?"];
+    discount_valid [shape=diamond,label="Code valid?"];
+    apply_discount [label="Apply Discount"];
+
+    shipping_check [shape=diamond,label="Eligible for free shipping?"];
+    add_shipping [label="Add Shipping Fee"];
+
+    payment [label="Payment Attempt"];
+    payment_success [shape=diamond,label="Payment successful?"];
+    order_confirm [label="Confirm Order"];
+
+    end [shape=oval,label="End"];
+
+    start -> login;
+    login -> login_check;
+
+    login_check -> select_product [label="YES"];
+    login_check -> login [label="NO"];
+
+    select_product -> stock_check;
+
+    stock_check -> add_cart [label="YES"];
+    stock_check -> select_product [label="NO"];
+
+    add_cart -> continue_shop;
+
+    continue_shop -> select_product [label="YES"];
+    continue_shop -> discount_question [label="NO"];
+
+    discount_question -> discount_valid [label="YES"];
+    discount_question -> shipping_check [label="NO"];
+
+    discount_valid -> apply_discount [label="YES"];
+    discount_valid -> shipping_check [label="NO"];
+
+    apply_discount -> shipping_check;
+
+    shipping_check -> payment [label="YES"];
+    shipping_check -> add_shipping [label="NO"];
+
+    add_shipping -> payment;
+
+    payment -> payment_success;
+
+    payment_success -> order_confirm [label="YES"];
+    payment_success -> payment [label="NO"];
+
+    order_confirm -> end;
+}
