@@ -1,0 +1,61 @@
+flowchart TD
+
+Start([System Start])
+
+Active{Is system active?}
+
+Sensors[Check all sensors]
+
+Motion{Motion detected?}
+
+Door{Door / window opened?}
+
+Threat{Any threat detected?}
+
+Home{Is homeowner at home?}
+
+Low[Alarm Level: LOW]
+
+Medium[Alarm Level: MEDIUM]
+
+High[Alarm Level: HIGH]
+
+Camera[Activate camera]
+
+Notify[Send notifications<br>SMS + App + Email]
+
+Wait[Wait]
+
+ResetCheck{Reset command received?}
+
+Reset[Reset alarm]
+
+
+Start --> Active
+
+Active -- Yes --> Sensors
+Active -- No --> Active
+
+Sensors --> Motion
+Motion --> Door
+
+Door --> Threat
+
+Threat -- No --> Wait
+Threat -- Yes --> Home
+
+Home -- Yes --> Low
+Home -- No --> Medium
+
+Medium --> Camera
+Low --> Notify
+Camera --> Notify
+
+Notify --> Wait
+
+Wait --> ResetCheck
+
+ResetCheck -- Yes --> Reset
+ResetCheck -- Continue --> Sensors
+
+Reset --> Sensors
