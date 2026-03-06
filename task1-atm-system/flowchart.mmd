@@ -1,0 +1,55 @@
+flowchart TD
+
+A([Start])
+
+B[/Enter PIN/]
+
+C{PIN correct?}
+
+D[Incorrect PIN]
+
+E{3 attempts used?}
+
+F[Card blocked]
+
+G[/Enter withdrawal amount/]
+
+H{Multiple of 20 TL?}
+
+I{Enough balance?}
+
+J{Daily limit exceeded?}
+
+K[Dispense cash and update balance]
+
+L{Another transaction?}
+
+M([End])
+
+A --> B
+B --> C
+
+C -- Yes --> G
+C -- No --> D
+
+D --> E
+E -- Yes --> F
+E -- No --> B
+
+G --> H
+
+H -- No --> G
+H -- Yes --> I
+
+I -- No --> G
+I -- Yes --> J
+
+J -- Yes --> G
+J -- No --> K
+
+K --> L
+
+L -- Yes --> G
+L -- No --> M
+
+F --> M
