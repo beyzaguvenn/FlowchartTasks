@@ -1,0 +1,40 @@
+flowchart TD
+
+Start([Start]) --> ID[Enter ID Number]
+
+ID --> Menu{Select Action}
+
+Menu -->|1| Clinic
+Menu -->|2| TestCheck
+Menu -->|3| End([End])
+
+subgraph Appointment Module
+Clinic[Select Clinic]
+Doctor[Display Doctor List]
+Slots[Show Available Time Slots]
+Confirm{Confirm Appointment?}
+SMS[Send SMS Notification]
+
+Clinic --> Doctor --> Slots --> Confirm
+Confirm -->|Yes| SMS
+Confirm -->|No| Slots
+end
+
+SMS --> Menu
+
+subgraph Test Results Module
+TestCheck{Tests Exist?}
+Ready{Results Ready?}
+Show[Display Results]
+Download{Download PDF?}
+Wait[Show Waiting Message]
+
+TestCheck -->|No| Wait
+TestCheck -->|Yes| Ready
+Ready -->|Yes| Show
+Ready -->|No| Wait
+Show --> Download
+end
+
+Download --> Menu
+Wait --> Menu
