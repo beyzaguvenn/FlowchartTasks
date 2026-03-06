@@ -1,0 +1,55 @@
+digraph ATM_System {
+    node [fontname="Arial"];
+
+    // Node Definitions
+    Start [label="START", shape=oval];
+    End [label="END", shape=oval];
+    
+    InputPin [label="READ UserPin", shape=parallelogram];
+    CheckPin [label="Is PIN\nCorrect?", shape=diamond];
+    IncAttempts [label="Attempts + 1", shape=box];
+    MaxCheck [label="Attempts >= 3?", shape=diamond];
+    Blocked [label="PRINT Card Blocked", shape=parallelogram];
+    
+    Menu [label="READ Amount", shape=parallelogram];
+    Val20 [label="Multiple of 20?", shape=diamond];
+    Err20 [label="PRINT Invalid Multiple", shape=parallelogram];
+    
+    ValBal [label="Amount <= Balance?", shape=diamond];
+    ErrBal [label="PRINT Insufficient Funds", shape=parallelogram];
+    
+    ValLimit [label="Within Daily Limit?", shape=diamond];
+    ErrLimit [label="PRINT Limit Exceeded", shape=parallelogram];
+    
+    Dispense [label="Update Balance\n& Dispense", shape=box];
+    Another [label="Another Transaction?", shape=diamond];
+    Exit [label="PRINT Goodbye", shape=parallelogram];
+
+    // Connections
+    Start -> InputPin;
+    InputPin -> CheckPin;
+    CheckPin -> IncAttempts [label="No"];
+    IncAttempts -> MaxCheck;
+    MaxCheck -> Blocked [label="Yes"];
+    MaxCheck -> InputPin [label="No"];
+    Blocked -> End;
+    
+    CheckPin -> Menu [label="Yes"];
+    Menu -> Val20;
+    Val20 -> Err20 [label="No"];
+    Err20 -> Menu;
+    
+    Val20 -> ValBal [label="Yes"];
+    ValBal -> ErrBal [label="No"];
+    ErrBal -> Menu;
+    
+    ValBal -> ValLimit [label="Yes"];
+    ValLimit -> ErrLimit [label="No"];
+    ErrLimit -> Menu;
+    
+    ValLimit -> Dispense [label="Yes"];
+    Dispense -> Another;
+    Another -> Menu [label="Yes"];
+    Another -> Exit [label="No"];
+    Exit -> End;
+}
