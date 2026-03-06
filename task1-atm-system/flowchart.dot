@@ -1,55 +1,111 @@
 digraph ATM_System {
-    node [fontname="Arial"];
+    // Define Graph Attributes
+    rankdir=TB;
+    node [fontname="Helvetica,Arial,sans-serif", margin=0.1];
+    edge [fontname="Helvetica,Arial,sans-serif", fontsize=10];
 
-    // Node Definitions
-    Start [label="START", shape=oval];
-    End [label="END", shape=oval];
-    
-    InputPin [label="READ UserPin", shape=parallelogram];
-    CheckPin [label="Is PIN\nCorrect?", shape=diamond];
-    IncAttempts [label="Attempts + 1", shape=box];
-    MaxCheck [label="Attempts >= 3?", shape=diamond];
-    Blocked [label="PRINT Card Blocked", shape=parallelogram];
-    
-    Menu [label="READ Amount", shape=parallelogram];
-    Val20 [label="Multiple of 20?", shape=diamond];
-    Err20 [label="PRINT Invalid Multiple", shape=parallelogram];
-    
-    ValBal [label="Amount <= Balance?", shape=diamond];
-    ErrBal [label="PRINT Insufficient Funds", shape=parallelogram];
-    
-    ValLimit [label="Within Daily Limit?", shape=diamond];
-    ErrLimit [label="PRINT Limit Exceeded", shape=parallelogram];
-    
-    Dispense [label="Update Balance\n& Dispense", shape=box];
-    Another [label="Another Transaction?", shape=diamond];
-    Exit [label="PRINT Goodbye", shape=parallelogram];
+    // Define Shapes based on Flowchart Standards
+    node [shape=oval] Start EndNode;
+    node [shape=parallelogram] Welcome AskPIN PINSuccess PrintInc PrintBlock PrintRetain AskAmount Deny20 DenyBal DenyLim PrintReceipt AskRepeat PrintTakeCard;
+    node [shape=box] Init SetPIN4 IncPIN SetBlock SetContFalse1 SetValid SetValidF1 SetValidF2 SetValidF3 Deduct SetContFalse2;
+    node [shape=diamond] PINLoopCond CheckPIN Check3 BlockCheck MainLoopCond Check20 CheckBal CheckLim CheckValidFinal CheckNo;
 
-    // Connections
-    Start -> InputPin;
-    InputPin -> CheckPin;
-    CheckPin -> IncAttempts [label="No"];
-    IncAttempts -> MaxCheck;
-    MaxCheck -> Blocked [label="Yes"];
-    MaxCheck -> InputPin [label="No"];
-    Blocked -> End;
+    // Node Labels
+    Start [label="START"];
+    EndNode [label="END"];
+    Init [label="Initialize System Variables"];
+    Welcome [label="Welcome User\n& Insert Card"];
+    PINLoopCond [label="Attempts < 3\n& Card Active?"];
+    AskPIN [label="Enter PIN"];
+    CheckPIN [label="Is PIN Correct?"];
+    PINSuccess [label="Display 'PIN Accepted'"];
+    SetPIN4 [label="Set Attempts to Max\nto Exit Loop"];
+    IncPIN [label="Increment PIN Attempts"];
+    PrintInc [label="Display 'Incorrect PIN'"];
+    Check3 [label="Attempts == 3?"];
+    SetBlock [label="Block Card"];
+    PrintBlock [label="Display 'Card Blocked'"];
+    BlockCheck [label="Is Card Blocked?"];
+    PrintRetain [label="Display 'Contact Bank'"];
+    SetContFalse1 [label="End System Session"];
+    MainLoopCond [label="Continue System?"];
+    AskAmount [label="Display Balance\n& Enter Amount"];
+    SetValid [label="Assume Transaction is Valid"];
+    Check20 [label="Amount NOT a\nmultiple of 20TL?"];
+    Deny20 [label="Display 'Must be\nmultiple of 20TL'"];
+    SetValidF1 [label="Mark Transaction Invalid"];
+    CheckBal [label="Amount > Balance?"];
+    DenyBal [label="Display 'Insufficient Balance'"];
+    SetValidF2 [label="Mark Transaction Invalid"];
+    CheckLim [label="Amount > Daily Limit?"];
+    DenyLim [label="Display 'Exceeds Limit'"];
+    SetValidF3 [label="Mark Transaction Invalid"];
+    CheckValidFinal [label="Is Transaction Valid?"];
+    Deduct [label="Deduct Amount from\nBalance & Limit"];
+    PrintReceipt [label="Dispense Cash\n& Print Receipt"];
+    AskRepeat [label="Prompt: Another?\n(Enter YES/NO)"];
+    CheckNo [label="User entered 'NO'?"];
+    SetContFalse2 [label="End System Session"];
+    PrintTakeCard [label="Display 'Take Card'"];
+
+    // Relationships (Edges)
+    Start -> Init;
+    Init -> Welcome;
+    Welcome -> PINLoopCond;
+
+    // PIN Loop
+    PINLoopCond -> AskPIN [label="Yes"];
+    AskPIN -> CheckPIN;
+    CheckPIN -> PINSuccess [label="Yes"];
+    PINSuccess -> SetPIN4;
+    SetPIN4 -> PINLoopCond;
     
-    CheckPin -> Menu [label="Yes"];
-    Menu -> Val20;
-    Val20 -> Err20 [label="No"];
-    Err20 -> Menu;
-    
-    Val20 -> ValBal [label="Yes"];
-    ValBal -> ErrBal [label="No"];
-    ErrBal -> Menu;
-    
-    ValBal -> ValLimit [label="Yes"];
-    ValLimit -> ErrLimit [label="No"];
-    ErrLimit -> Menu;
-    
-    ValLimit -> Dispense [label="Yes"];
-    Dispense -> Another;
-    Another -> Menu [label="Yes"];
-    Another -> Exit [label="No"];
-    Exit -> End;
+    CheckPIN -> IncPIN [label="No"];
+    IncPIN -> PrintInc;
+    PrintInc -> Check3;
+    Check3 -> SetBlock [label="Yes"];
+    SetBlock -> PrintBlock;
+    PrintBlock -> PINLoopCond;
+    Check3 -> PINLoopCond [label="No"];
+
+    // Exit PIN Loop
+    PINLoopCond -> BlockCheck [label="No"];
+    BlockCheck -> PrintRetain [label="Yes"];
+    PrintRetain -> SetContFalse1;
+    SetContFalse1 -> MainLoopCond;
+    BlockCheck -> MainLoopCond [label="No"];
+
+    // Main Transaction Loop
+    MainLoopCond -> AskAmount [label="Yes"];
+    AskAmount -> SetValid;
+    SetValid -> Check20;
+
+    Check20 -> Deny20 [label="Yes"];
+    Deny20 -> SetValidF1;
+    SetValidF1 -> CheckBal;
+    Check20 -> CheckBal [label="No"];
+
+    CheckBal -> DenyBal [label="Yes"];
+    DenyBal -> SetValidF2;
+    SetValidF2 -> CheckLim;
+    CheckBal -> CheckLim [label="No"];
+
+    CheckLim -> DenyLim [label="Yes"];
+    DenyLim -> SetValidF3;
+    SetValidF3 -> CheckValidFinal;
+    CheckLim -> CheckValidFinal [label="No"];
+
+    CheckValidFinal -> Deduct [label="Yes"];
+    Deduct -> PrintReceipt;
+    PrintReceipt -> AskRepeat;
+    CheckValidFinal -> AskRepeat [label="No"];
+
+    AskRepeat -> CheckNo;
+    CheckNo -> SetContFalse2 [label="Yes"];
+    SetContFalse2 -> PrintTakeCard;
+    PrintTakeCard -> MainLoopCond;
+    CheckNo -> MainLoopCond [label="No"];
+
+    // End Loop
+    MainLoopCond -> EndNode [label="No"];
 }
