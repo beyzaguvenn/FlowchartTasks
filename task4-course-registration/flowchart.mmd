@@ -1,0 +1,47 @@
+flowchart TD
+
+Start([Start])
+
+Login{Login valid?}
+
+More{Select another course?}
+
+Quota{Quota available?}
+
+Prereq{Prerequisites satisfied?}
+
+Schedule{Schedule conflict?}
+
+Credit{Credit limit exceeded?}
+
+AdvisorNeed{Advisor approval required?}
+
+AdvisorApprove{Advisor approves?}
+
+End([End])
+
+Start --> Login
+
+Login -- No --> End
+Login -- Yes --> More
+
+More -- No --> AdvisorNeed
+More -- Yes --> Quota
+
+Quota -- No --> More
+Quota -- Yes --> Prereq
+
+Prereq -- No --> More
+Prereq -- Yes --> Schedule
+
+Schedule -- Yes --> More
+Schedule -- No --> Credit
+
+Credit -- Yes --> More
+Credit -- No --> More
+
+AdvisorNeed -- No --> End
+AdvisorNeed -- Yes --> AdvisorApprove
+
+AdvisorApprove -- Yes --> End
+AdvisorApprove -- No --> End
