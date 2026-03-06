@@ -1,0 +1,58 @@
+digraph SmartHomeSecurity {
+rankdir=TB;
+
+Start [shape=oval, label="System Start"];
+
+CheckActive [shape=diamond, label="Is system active?"];
+ReadSensors [shape=rectangle, label="Check all sensors"];
+MotionCheck [shape=diamond, label="Motion detected?"];
+DoorCheck [shape=diamond, label="Door / window opened?"];
+
+ThreatCheck [shape=diamond, label="Any threat detected?"];
+
+HomeCheck [shape=diamond, label="Is homeowner at home?"];
+
+LowAlarm [shape=rectangle, label="Set Alarm Level: LOW"];
+MediumAlarm [shape=rectangle, label="Set Alarm Level: MEDIUM"];
+HighAlarm [shape=rectangle, label="Set Alarm Level: HIGH"];
+
+Camera [shape=rectangle, label="Activate camera"];
+
+Notify [shape=rectangle, label="Send notifications\nSMS + App + Email"];
+
+Wait [shape=rectangle, label="Wait"];
+
+ResetCheck [shape=diamond, label="Reset command received?"];
+
+Reset [shape=rectangle, label="Reset alarm"];
+
+Start -> CheckActive;
+
+CheckActive -> ReadSensors [label="Yes"];
+CheckActive -> CheckActive [label="No / Wait"];
+
+ReadSensors -> MotionCheck;
+MotionCheck -> DoorCheck;
+
+DoorCheck -> ThreatCheck;
+
+ThreatCheck -> Wait [label="No threat"];
+ThreatCheck -> HomeCheck [label="Threat"];
+
+HomeCheck -> LowAlarm [label="Yes"];
+HomeCheck -> MediumAlarm [label="No"];
+
+MediumAlarm -> Camera;
+
+Camera -> Notify;
+LowAlarm -> Notify;
+
+Notify -> Wait;
+
+Wait -> ResetCheck;
+
+ResetCheck -> Reset [label="Yes"];
+ResetCheck -> ReadSensors [label="Continue"];
+
+Reset -> ReadSensors [label="Keep monitoring"];
+}
